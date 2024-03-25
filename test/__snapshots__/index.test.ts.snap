@@ -1,0 +1,48 @@
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+
+exports[`Unify Fastify should handle validation 1`] = `422`;
+
+exports[`Unify Fastify should handle validation 2`] = `[n: {
+  "type": "validation",
+  "on": "query",
+  "property": "/name",
+  "message": "Required property",
+  "expected": {
+    "name": ""
+  },
+  "found": {},
+  "errors": [
+    {
+      "type": 45,
+      "schema": {
+        "type": "string"
+      },
+      "path": "/name",
+      "message": "Required property"
+    },
+    {
+      "type": 54,
+      "schema": {
+        "type": "string"
+      },
+      "path": "/name",
+      "message": "Expected string"
+    }
+  ]
+}]`;
+exports[`Unify Fastify should handle elysia error 1`] = `401`;
+
+exports[`Unify Fastify should handle elysia error 2`] = `[n: Unauthorized]`;
+
+exports[`Unify Fastify should handle error 1`] = `500`;
+
+exports[`Unify Fastify should handle error 2`] = `[n: test]`;
+
+exports[`Unify Fastify should handle generic error 1`] = `500`;
+
+exports[`Unify Fastify should handle generic error 2`] = `[n: test]`;
+
+exports[`Unify Fastify should handle error from unify 1`] = `500`;
+
+exports[`Unify Fastify should handle error from unify 2`] = `[n: {"name":"Error","message":"Bad Request"}]`;
