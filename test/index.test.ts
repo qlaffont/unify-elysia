@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { treaty } from '@elysiajs/eden';
 import { beforeAll, describe, expect, it } from 'bun:test';
 import Elysia from 'elysia';
 
@@ -8,65 +7,90 @@ import { app } from './utils/server.test';
 const testRoute = async (
   server: Elysia,
   routePath: string,
-  supposedMessage: Record<string, unknown>,
+  supposedMessage: Record<string, unknown> | string | undefined | null,
   supposedStatus: number,
 ): Promise<unknown> => {
   let status: number;
+  let content: Record<string, unknown> | string | undefined | null;
+  let json = false;
 
-  const JSONResponse = await server
+  await server
     .handle(new Request(`http://localhost${routePath}`))
-    .then((res) => {
+    .then(async (res) => {
       status = res.status;
-      return res.json();
+
+      try {
+        content = await res.json();
+        json = true;
+        return;
+        // eslint-disable-next-line no-empty
+      } catch (error) {}
+
+      try {
+        content = await res.text();
+        return;
+        // eslint-disable-next-line no-empty
+      } catch (error) {}
+
+      return;
     });
 
-  expect(JSONResponse).toMatchObject(supposedMessage);
+  if (json) {
+    //@ts-ignore
+    expect(content).toMatchObject(supposedMessage);
+  } else {
+    //@ts-ignore
+    expect(content).toEqual(supposedMessage);
+  }
   expect(status!).toBe(supposedStatus);
 
-  return JSONResponse;
+  return;
 };
 
 describe('Unify Elysia', () => {
-  let api: ReturnType<typeof treaty<ReturnType<typeof app>>>;
   let currentApp: Elysia;
 
   beforeAll(() => {
     //@ts-ignore
     currentApp = app();
-    //@ts-ignore
-    api = treaty(currentApp);
   });
 
   it('should handle validation', async () => {
-    // @ts-ignore
-    const { error, status } = await api.validation.get({});
-
-    expect(status).toMatchSnapshot();
-    expect(JSON.stringify(error)).toMatchSnapshot();
+    await testRoute(
+      currentApp,
+      '/validation',
+      {
+        error: 'Bad Request',
+        context: 'Required property',
+      },
+      400,
+    );
   });
 
   it('should handle elysia error', async () => {
-    // @ts-ignore
-    const { error, status } = await api['elysia-error'].get({});
-
-    expect(status).toMatchSnapshot();
-    expect(JSON.stringify(error)).toMatchSnapshot();
+    await testRoute(currentApp, '/elysia-error', undefined, 401);
   });
 
   it('should handle generic error', async () => {
-    // @ts-ignore
-    const { error, status } = await api['generic-error'].get({});
-
-    expect(status).toMatchSnapshot();
-    expect(JSON.stringify(error)).toMatchSnapshot();
+    await testRoute(
+      currentApp,
+      '/generic-error',
+      {
+        error: 'An unexpected error occured',
+      },
+      500,
+    );
   });
 
   it('should handle error from unify', async () => {
-    // @ts-ignore
-    const { error, status } = await api['unify-error'].get({});
-
-    expect(status).toMatchSnapshot();
-    expect(JSON.stringify(error)).toMatchSnapshot();
+    await testRoute(
+      currentApp,
+      '/unify-error',
+      {
+        error: 'Bad Request',
+      },
+      400,
+    );
   });
 
   it('bad request', async () => {

@@ -104,7 +104,7 @@ export const pluginUnifyElysia = (userConfig: PluginUnifyElysia = {}) => {
       set.status = 400;
 
       return {
-        error: 'Bad Request - validation',
+        error: 'Bad Request',
         //@ts-ignore
         context: error.validator.Errors(error.value).First().message,
         ...(config?.disableDetails
