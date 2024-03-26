@@ -1,48 +1,17 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Unify Elysia should handle validation 1`] = `400`;
 
-exports[`Unify Fastify should handle validation 1`] = `422`;
+exports[`Unify Elysia should handle validation 2`] = `"{"status":400,"value":{"error":"Bad Request - validation","context":"Required property","stack":"Error: {\n  \"type\": \"validation\",\n  \"on\": \"query\",\n  \"property\": \"/name\",\n  \"message\": \"Required property\",\n  \"expected\": {\n    \"name\": \"\"\n  },\n  \"found\": {},\n  \"errors\": [\n    {\n      \"type\": 45,\n      \"schema\": {\n        \"type\": \"string\"\n      },\n      \"path\": \"/name\",\n      \"message\": \"Required property\"\n    },\n    {\n      \"type\": 54,\n      \"schema\": {\n        \"type\": \"string\"\n      },\n      \"path\": \"/name\",\n      \"message\": \"Expected string\"\n    }\n  ]\n}\n    at new _ValidationError (/home/quentin/Documents/dev/unify-elysia/node_modules/elysia/dist/index.mjs:2090:10)\n    at <anonymous> (:72:50)\n    at processTicksAndRejections (:12:39)","on":"query","expected":{"name":""},"errors":[{"type":45,"schema":{"type":"string"},"path":"/name","message":"Required property"},{"type":54,"schema":{"type":"string"},"path":"/name","message":"Expected string"}]}}"`;
 
-exports[`Unify Fastify should handle validation 2`] = `[n: {
-  "type": "validation",
-  "on": "query",
-  "property": "/name",
-  "message": "Required property",
-  "expected": {
-    "name": ""
-  },
-  "found": {},
-  "errors": [
-    {
-      "type": 45,
-      "schema": {
-        "type": "string"
-      },
-      "path": "/name",
-      "message": "Required property"
-    },
-    {
-      "type": 54,
-      "schema": {
-        "type": "string"
-      },
-      "path": "/name",
-      "message": "Expected string"
-    }
-  ]
-}]`;
-exports[`Unify Fastify should handle elysia error 1`] = `401`;
+exports[`Unify Elysia should handle elysia error 1`] = `401`;
 
-exports[`Unify Fastify should handle elysia error 2`] = `[n: Unauthorized]`;
+exports[`Unify Elysia should handle elysia error 2`] = `"{"status":401,"value":"Unauthorized"}"`;
 
-exports[`Unify Fastify should handle error 1`] = `500`;
+exports[`Unify Elysia should handle generic error 1`] = `500`;
 
-exports[`Unify Fastify should handle error 2`] = `[n: test]`;
+exports[`Unify Elysia should handle generic error 2`] = `"{"status":500,"value":{"error":"An unexpected error occured"}}"`;
 
-exports[`Unify Fastify should handle generic error 1`] = `500`;
+exports[`Unify Elysia should handle error from unify 1`] = `400`;
 
-exports[`Unify Fastify should handle generic error 2`] = `[n: test]`;
-
-exports[`Unify Fastify should handle error from unify 1`] = `500`;
-
-exports[`Unify Fastify should handle error from unify 2`] = `[n: {"name":"Error","message":"Bad Request"}]`;
+exports[`Unify Elysia should handle error from unify 2`] = `"{"status":400,"value":{"error":"Bad Request","stack":"Error: Bad Request\n    at construct (native)\n    at _construct (/home/quentin/Documents/dev/unify-elysia/node_modules/unify-errors/dist/unify-errors.cjs.development.js:4:37)\n    at Wrapper (/home/quentin/Documents/dev/unify-elysia/node_modules/unify-errors/dist/unify-errors.cjs.development.js:59:26)\n    at CustomError (/home/quentin/Documents/dev/unify-elysia/node_modules/unify-errors/dist/unify-errors.cjs.development.js:77:26)\n    at new BadRequest (/home/quentin/Documents/dev/unify-elysia/node_modules/unify-errors/dist/unify-errors.cjs.development.js:90:32)\n    at <anonymous> (/home/quentin/Documents/dev/unify-elysia/test/utils/server.test.ts:35:25)\n    at <anonymous> (:71:16)\n    at processTicksAndRejections (:12:39)","errorDetails":"Bad Request"}}"`;

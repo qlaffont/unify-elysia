@@ -30,12 +30,9 @@ export const pluginUnifyElysia = (userConfig: PluginUnifyElysia = {}) => {
     logInstance: console,
   };
 
-  console.log('PLUGIN IS LOADED');
-
   return new Elysia({
     name: 'unify-elysia',
-  }).onError(({ code, error, set }) => {
-    console.log('Error received');
+  }).onError({ as: 'global' }, ({ code, error, set }) => {
     let httpCode = 0;
     let customErrorMessage;
 
@@ -156,7 +153,7 @@ export const pluginUnifyElysia = (userConfig: PluginUnifyElysia = {}) => {
         case 'UNKNOWN':
           set.status = httpCode;
 
-          if (errorMessage) {
+          if (errorMessage && config.logInstance) {
             config.logInstance!.error(error);
           }
 

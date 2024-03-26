@@ -1,5 +1,5 @@
 {
-  "name": "unify-fastify",
+  "name": "unify-elysia",
   "version": "1.0.0",
   "main": "./dist/index.js",
   "typings": "dist/index.d.ts",
@@ -27,5 +27,6 @@
     "prettier": "3.2.4",
     "tsup": "^8.0.2"
   },
-  "module": "dist/index.mjs"
+  "module": "dist/index.mjs",
+  "packageManager": "pnpm@8.15.5+sha256.4b4efa12490e5055d59b9b9fc9438b7d581a6b7af3b5675eb5c5f447cee1a589"
 }
