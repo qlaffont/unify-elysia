@@ -12,7 +12,7 @@
   "dependencies": {
     "elysia": "latest",
     "unify-errors": "^1.2.226",
-    "@bogeychan/elysia-logger": "^0.0.19"
+    "@bogeychan/elysia-logger": "^0.0.20"
   },
   "devDependencies": {
     "@elysiajs/eden": "^1.0.6",
