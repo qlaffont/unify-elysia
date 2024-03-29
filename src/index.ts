@@ -32,6 +32,7 @@ export const pluginUnifyElysia = (userConfig: PluginUnifyElysia = {}) => {
 
   return new Elysia({
     name: 'unify-elysia',
+    seed: userConfig,
   }).onError({ as: 'global' }, ({ code, error, set }) => {
     let httpCode = 0;
     let customErrorMessage;
