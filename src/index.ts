@@ -27,7 +27,6 @@ export const pluginUnifyElysia = (userConfig: PluginUnifyElysia = {}) => {
   const config: PluginUnifyElysia = {
     ...defaultConfig,
     ...userConfig,
-    logInstance: console,
   };
 
   return new Elysia({
