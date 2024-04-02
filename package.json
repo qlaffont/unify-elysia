@@ -1,6 +1,6 @@
 {
   "name": "unify-elysia",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "files": [
     "dist",
     "src"
@@ -13,8 +13,10 @@
     "lint": "eslint src test",
     "build": "tsup src/index.ts"
   },
+  "peerDependencies": {
+    "elysia": "latest"
+  },
   "dependencies": {
-    "elysia": "latest",
     "unify-errors": "^1.2.226",
     "@bogeychan/elysia-logger": "^0.0.20"
   },
