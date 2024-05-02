@@ -162,6 +162,17 @@ describe('Unify Elysia', () => {
     );
   });
 
+  it('too-many-requests', async () => {
+    await testRoute(
+      currentApp,
+      '/too-many-requests',
+      {
+        error: 'Too Many Requests',
+      },
+      429,
+    );
+  });
+
   it('internal', async () => {
     await testRoute(
       currentApp,

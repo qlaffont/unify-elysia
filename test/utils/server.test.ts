@@ -9,6 +9,7 @@ import {
   NotFound,
   NotImplemented,
   TimeOut,
+  TooManyRequests,
   Unauthorized,
 } from 'unify-errors';
 
@@ -64,6 +65,10 @@ export const app = (config?: PluginUnifyElysia) => {
 
   server.get('/request-time-out', async () => {
     throw new TimeOut({ example: 'A request time out error' });
+  });
+
+  server.get('/too-many-requests', async () => {
+    throw new TooManyRequests({});
   });
 
   server.get('/internal', async () => {
