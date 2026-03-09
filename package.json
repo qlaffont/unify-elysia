@@ -22,7 +22,7 @@
     }
   },
   "peerDependencies": {
-    "elysia": "latest"
+    "elysia": "1.4.27"
   },
   "dependencies": {
     "@bogeychan/elysia-logger": "^0.1.10",
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@elysiajs/eden": "^1.4.8",
+    "@sinclair/typebox": "^0.34.0",
     "bun-types": "latest",
     "bunup": "latest",
     "elysia": "^1.4.27",
