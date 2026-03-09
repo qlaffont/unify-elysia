@@ -2,16 +2,22 @@ name: CI
 on: [push]
 jobs:
   build:
-    name: Build, lint, and test on latest Bun 
+    name: Build, lint, and test on ${{ matrix.runtime }}
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        runtime: [bun, node]
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+
+      - name: Setup Node (latest)
+        if: matrix.runtime == 'node'
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
 
       - uses: oven-sh/setup-bun@v2
 
