@@ -7,17 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        runtime: [bun, node]
+        runtime: [bun]
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Setup Node (latest)
-        if: matrix.runtime == 'node'
-        uses: actions/setup-node@v4
-        with:
-          node-version: latest
 
       - uses: oven-sh/setup-bun@v2
 
