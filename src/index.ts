@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import type { createPinoLogger } from '@bogeychan/elysia-logger';
-import { Elysia } from 'elysia';
+import { Elysia, ElysiaCustomStatusResponse } from 'elysia';
 import {
   BadRequest,
   CustomError,
@@ -33,7 +32,10 @@ export const pluginUnifyElysia = (userConfig: PluginUnifyElysia = {}) => {
   return new Elysia({
     name: 'unify-elysia',
     seed: userConfig,
-  }).onError({ as: 'global' }, ({ code, error, set }) => {
+  }).onError({ as: 'global' }, ({ code, error: rawError, set }) => {
+    if (rawError instanceof ElysiaCustomStatusResponse) return;
+    const error = rawError as unknown as Error;
+
     let httpCode = 0;
     let customErrorMessage;
 
@@ -46,8 +48,7 @@ export const pluginUnifyElysia = (userConfig: PluginUnifyElysia = {}) => {
     let errorMessage: Error | undefined;
     try {
       errorMessage = JSON.parse(error.message);
-      // eslint-disable-next-line no-empty
-    } catch (err) {}
+    } catch {}
 
     switch (errorName) {
       case BadRequest.name: {
@@ -90,7 +91,7 @@ export const pluginUnifyElysia = (userConfig: PluginUnifyElysia = {}) => {
     }
 
     if (!config?.disableLog && config.logInstance) {
-      config.logInstance.error({ ...error });
+      (config.logInstance as { error: (arg: unknown) => void }).error({ ...error });
     }
 
     const response = {
@@ -142,13 +143,6 @@ export const pluginUnifyElysia = (userConfig: PluginUnifyElysia = {}) => {
             ...response,
             ...(config?.disableDetails ? {} : { code }),
           };
-        case 'VALIDATION':
-          set.status = 400;
-
-          return {
-            ...response,
-            error: 'Bad Request',
-          };
         case 'NOT_FOUND':
           set.status = 404;
 
@@ -159,10 +153,12 @@ export const pluginUnifyElysia = (userConfig: PluginUnifyElysia = {}) => {
           set.status = httpCode;
 
           if (errorMessage && config.logInstance) {
-            config.logInstance!.error(error);
+            (config.logInstance as { error: (arg: unknown) => void }).error(error);
           }
 
           return response;
+        default:
+          return;
       }
     }
   });

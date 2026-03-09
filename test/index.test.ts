@@ -2,6 +2,7 @@
 import { beforeAll, describe, expect, it } from 'bun:test';
 import Elysia from 'elysia';
 
+import { pluginUnifyElysia } from '../src';
 import { app } from './utils/server.test';
 
 const testRoute = async (
@@ -61,7 +62,7 @@ describe('Unify Elysia', () => {
       '/validation',
       {
         error: 'Bad Request',
-        context: 'Required property',
+        context: 'Expected string',
       },
       400,
     );
@@ -227,6 +228,56 @@ describe('Unify Elysia', () => {
         errorDetails: 'A default error',
       },
       500,
+    );
+  });
+});
+
+describe('Unify Elysia - PARSE error', () => {
+  let currentApp: Elysia;
+
+  beforeAll(() => {
+    //@ts-ignore
+    currentApp = app();
+  });
+
+  it('should return 500 with code on malformed JSON body', async () => {
+    let status: number;
+    let content: Record<string, unknown>;
+
+    await currentApp
+      .handle(
+        new Request('http://localhost/parse-error', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: 'not-valid-json{',
+        }),
+      )
+      .then(async (res) => {
+        status = res.status;
+        content = await res.json();
+      });
+
+    //@ts-ignore
+    expect(status!).toBe(500);
+    //@ts-ignore
+    expect(content!).toMatchObject({ code: 'PARSE' });
+  });
+});
+
+describe('Unify Elysia - with logInstance', () => {
+  let currentApp: Elysia;
+
+  beforeAll(() => {
+    //@ts-ignore
+    currentApp = app({ logInstance: console });
+  });
+
+  it('should log errors via logInstance', async () => {
+    await testRoute(
+      currentApp,
+      '/bad-request',
+      { error: 'Bad Request' },
+      400,
     );
   });
 });

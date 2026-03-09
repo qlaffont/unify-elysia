@@ -1,5 +1,5 @@
 import { logger } from '@bogeychan/elysia-logger';
-import { Elysia, error, t } from 'elysia';
+import { Elysia, status, t } from 'elysia';
 import {
   BadRequest,
   CustomError,
@@ -29,6 +29,7 @@ export const app = (config?: PluginUnifyElysia) => {
     .use(
       logger({
         level: 'error',
+        autoLogging: false,
       }),
     )
     .use(pluginUnifyElysia(config))
@@ -38,7 +39,7 @@ export const app = (config?: PluginUnifyElysia) => {
       }),
     })
     .get('/elysia-error', () => {
-      return error(401, 'Unauthorized');
+      return status(401, 'Unauthorized');
     })
     .get('/generic-error', () => {
       throw 'test';
@@ -89,6 +90,10 @@ export const app = (config?: PluginUnifyElysia) => {
 
   server.get('/rate-limit', async () => {
     throw new Error('rate limit');
+  });
+
+  server.post('/parse-error', async ({ body }) => body, {
+    body: t.Object({ name: t.String() }),
   });
 
   return server;
