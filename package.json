@@ -1,6 +1,6 @@
 {
   "name": "unify-elysia",
-  "version": "1.1.44",
+  "version": "2.0.0",
   "files": [
     "dist",
     "src"
@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@bogeychan/elysia-logger": "^0.1.10",
-    "unify-errors": "^1.3.91"
+    "unify-errors": "^2.0.0"
   },
   "devDependencies": {
     "@elysiajs/eden": "^1.4.8",

@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { beforeAll, describe, expect, it } from 'bun:test';
-import Elysia from 'elysia';
+import { beforeAll, describe, expect, it } from "bun:test";
+import Elysia from "elysia";
 
-import { pluginUnifyElysia } from '../src';
-import { app } from './utils/server.test';
+import { app } from "./utils/server.test";
 
 const testRoute = async (
   server: Elysia,
@@ -15,26 +14,24 @@ const testRoute = async (
   let content: Record<string, unknown> | string | undefined | null;
   let json = false;
 
-  await server
-    .handle(new Request(`http://localhost${routePath}`))
-    .then(async (res) => {
-      status = res.status;
+  await server.handle(new Request(`http://localhost${routePath}`)).then(async (res) => {
+    status = res.status;
 
-      try {
-        content = await res.json();
-        json = true;
-        return;
-        // eslint-disable-next-line no-empty
-      } catch (error) {}
-
-      try {
-        content = await res.text();
-        return;
-        // eslint-disable-next-line no-empty
-      } catch (error) {}
-
+    try {
+      content = await res.json();
+      json = true;
       return;
-    });
+      // eslint-disable-next-line no-empty
+    } catch {}
+
+    try {
+      content = await res.text();
+      return;
+      // eslint-disable-next-line no-empty
+    } catch {}
+
+    return;
+  });
 
   if (json) {
     //@ts-ignore
@@ -48,7 +45,7 @@ const testRoute = async (
   return;
 };
 
-describe('Unify Elysia', () => {
+describe("Unify Elysia", () => {
   let currentApp: Elysia;
 
   beforeAll(() => {
@@ -56,154 +53,195 @@ describe('Unify Elysia', () => {
     currentApp = app();
   });
 
-  it('should handle validation', async () => {
+  it("should handle validation", async () => {
     await testRoute(
       currentApp,
-      '/validation',
+      "/validation",
       {
-        error: 'Bad Request',
-        context: 'Expected string',
+        code: "VALIDATION_ERROR",
+        message: "Bad Request",
+        details: ["Expected string"],
       },
       400,
     );
   });
 
-  it('should handle elysia error', async () => {
-    await testRoute(currentApp, '/elysia-error', undefined, 401);
+  it("should handle elysia error", async () => {
+    await testRoute(currentApp, "/elysia-error", undefined, 401);
   });
 
-  it('should handle generic error', async () => {
+  it("should handle generic error", async () => {
     await testRoute(
       currentApp,
-      '/generic-error',
+      "/generic-error",
       {
-        error: 'An unexpected error occured',
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occured",
+        details: ["test"],
       },
       500,
     );
   });
 
-  it('should handle error from unify', async () => {
+  it("should handle error from unify", async () => {
     await testRoute(
       currentApp,
-      '/unify-error',
+      "/unify-error",
       {
-        error: 'Bad Request',
+        code: "BAD_REQUEST",
+        message: "Bad Request",
       },
       400,
     );
   });
 
-  it('bad request', async () => {
+  it("bad request", async () => {
     await testRoute(
       currentApp,
-      '/bad-request',
+      "/bad-request",
       {
-        error: 'Bad Request',
-        context: { example: 'A bad request error' },
+        code: "BAD_REQUEST",
+        message: "Bad Request",
+        details: ["A bad request error"],
       },
       400,
     );
   });
 
-  it('unauthorized', async () => {
+  it("unauthorized", async () => {
     await testRoute(
       currentApp,
-      '/unauthorized',
+      "/unauthorized",
       {
-        error: 'Unauthorized',
-        context: { example: 'An unauthorized error' },
+        code: "UNAUTHORIZED",
+        message: "Unauthorized",
+        details: ["An unauthorized error"],
       },
       401,
     );
   });
 
-  it('forbidden', async () => {
+  it("forbidden", async () => {
     await testRoute(
       currentApp,
-      '/forbidden',
+      "/forbidden",
       {
-        error: 'Forbidden',
-        context: { example: 'A forbidden error' },
+        code: "FORBIDDEN",
+        message: "Forbidden",
+        details: ["A forbidden error"],
       },
       403,
     );
   });
 
-  it('not-found', async () => {
+  it("not-found", async () => {
     await testRoute(
       currentApp,
-      '/not-found',
+      "/not-found",
       {
-        error: 'Not Found',
-        context: { example: 'A not found error' },
+        code: "NOT_FOUND",
+        message: "Not Found",
+        details: ["A not found error"],
       },
       404,
     );
 
     await testRoute(
       currentApp,
-      '/not-found-url-not-registered',
+      "/not-found-url-not-registered",
       {
-        error: 'Not Found',
+        code: "NOT_FOUND",
+        message: "Not Found",
       },
       404,
     );
   });
 
-  it('time-out', async () => {
+  it("conflict", async () => {
     await testRoute(
       currentApp,
-      '/request-time-out',
+      "/conflict",
       {
-        error: 'Request Time-out',
-        context: { example: 'A request time out error' },
+        code: "CONFLICT",
+        message: "Conflict",
+        details: ["A conflict error"],
+      },
+      409,
+    );
+  });
+
+  it("time-out", async () => {
+    await testRoute(
+      currentApp,
+      "/request-time-out",
+      {
+        code: "REQUEST_TIMEOUT",
+        message: "Request Time-out",
+        details: ["A request time out error"],
       },
       408,
     );
   });
 
-  it('too-many-requests', async () => {
+  it("too-many-requests", async () => {
     await testRoute(
       currentApp,
-      '/too-many-requests',
+      "/too-many-requests",
       {
-        error: 'Too Many Requests',
+        code: "TOO_MANY_REQUESTS",
+        message: "Too Many Requests",
       },
       429,
     );
   });
 
-  it('internal', async () => {
+  it("internal", async () => {
     await testRoute(
       currentApp,
-      '/internal',
+      "/internal",
       {
-        error: 'Internal Server Error',
-        context: { example: 'An internal server error' },
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Internal Server Error",
+        details: ["An internal server error"],
       },
       500,
     );
   });
 
-  it('not-implemented', async () => {
+  it("not-implemented", async () => {
     await testRoute(
       currentApp,
-      '/not-implemented',
+      "/not-implemented",
       {
-        error: 'Not Implemented',
-        context: { example: 'A not implemented error' },
+        code: "NOT_IMPLEMENTED",
+        message: "Not Implemented",
+        details: ["A not implemented error"],
       },
       501,
     );
   });
 
-  it('rate limit', async () => {
+  it("service unavailable", async () => {
     await testRoute(
       currentApp,
-      '/rate-limit',
+      "/service-unavailable",
       {
-        error: 'Too Many Requests',
+        code: "SERVICE_UNAVAILABLE",
+        message: "Service Unavailable",
+        details: ["A service unavailable error"],
+      },
+      503,
+    );
+  });
+
+  it("rate limit", async () => {
+    await testRoute(
+      currentApp,
+      "/rate-limit",
+      {
+        code: "TOO_MANY_REQUESTS",
+        message: "Too Many Requests",
+        details: ["rate limit"],
       },
       429,
     );
@@ -212,8 +250,12 @@ describe('Unify Elysia', () => {
   it("error not extending 'CustomError' from 'unify-errors'", async () => {
     await testRoute(
       currentApp,
-      '/not-custom',
-      { error: 'An unexpected error occured' },
+      "/not-custom",
+      {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occured",
+        details: ["A generic, not customized error"],
+      },
       500,
     );
   });
@@ -221,18 +263,18 @@ describe('Unify Elysia', () => {
   it("default error extending 'CustomError' from 'unify-errors'", async () => {
     await testRoute(
       currentApp,
-      '/default-case',
+      "/default-case",
       {
-        error: 'An unexpected error occured',
-        context: { example: 'A CustomError but not handled' },
-        errorDetails: 'A default error',
+        code: "DEFAULT_ERROR",
+        message: "A default error",
+        details: ["A CustomError but not handled"],
       },
       500,
     );
   });
 });
 
-describe('Unify Elysia - PARSE error', () => {
+describe("Unify Elysia - PARSE error", () => {
   let currentApp: Elysia;
 
   beforeAll(() => {
@@ -240,16 +282,16 @@ describe('Unify Elysia - PARSE error', () => {
     currentApp = app();
   });
 
-  it('should return 500 with code on malformed JSON body', async () => {
+  it("should return 500 with code on malformed JSON body", async () => {
     let status: number;
     let content: Record<string, unknown>;
 
     await currentApp
       .handle(
-        new Request('http://localhost/parse-error', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: 'not-valid-json{',
+        new Request("http://localhost/parse-error", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: "not-valid-json{",
         }),
       )
       .then(async (res) => {
@@ -260,11 +302,11 @@ describe('Unify Elysia - PARSE error', () => {
     //@ts-ignore
     expect(status!).toBe(500);
     //@ts-ignore
-    expect(content!).toMatchObject({ code: 'PARSE' });
+    expect(content!).toMatchObject({ code: "PARSE" });
   });
 });
 
-describe('Unify Elysia - with logInstance', () => {
+describe("Unify Elysia - with logInstance", () => {
   let currentApp: Elysia;
 
   beforeAll(() => {
@@ -272,11 +314,29 @@ describe('Unify Elysia - with logInstance', () => {
     currentApp = app({ logInstance: console });
   });
 
-  it('should log errors via logInstance', async () => {
+  it("should log errors via logInstance", async () => {
     await testRoute(
       currentApp,
-      '/bad-request',
-      { error: 'Bad Request' },
+      "/bad-request",
+      { code: "BAD_REQUEST", message: "Bad Request" },
+      400,
+    );
+  });
+});
+
+describe("Unify Elysia - disableDetails", () => {
+  it("should keep code and message while stripping details", async () => {
+    //@ts-ignore
+    const currentApp: Elysia = app({ disableDetails: true });
+
+    await testRoute(
+      currentApp,
+      "/bad-request",
+      {
+        code: "BAD_REQUEST",
+        message: "Bad Request",
+        details: [],
+      },
       400,
     );
   });
